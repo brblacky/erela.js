@@ -467,6 +467,8 @@ export interface PlayerOptions {
 
 /** If track partials are set some of these will be `undefined` as they were removed. */
 export interface Track {
+  /** T encoded track. */
+  spotifyUri: string | null;
   /** The base64 encoded track. */
   readonly track: string;
   /** The title of the track. */

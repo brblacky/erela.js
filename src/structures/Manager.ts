@@ -220,10 +220,10 @@ export interface Manager {
  * @noInheritDoc
  */
 export class Manager extends EventEmitter {
-  public static readonly DEFAULT_SOURCES: Record<SearchPlatform, string> = {
+  public static readonly DEFAULT_SOURCES: Partial<Record<SearchPlatform, string>> = {
     "youtube music": "ytmsearch",
     "youtube": "ytsearch",
-    "soundcloud": "scsearch"
+    "soundcloud": "scsearch",
   }
 
   /** The map of players. */
@@ -342,15 +342,17 @@ export class Manager extends EventEmitter {
 
       const _query: SearchQuery = typeof query === "string" ? { query } : query;
       const _source = Manager.DEFAULT_SOURCES[_query.source ?? this.options.defaultSearchPlatform] ?? _query.source;
-
+      
       let search = _query.query;
-      if (!/^https?:\/\//.test(search)) {
+      if (_source !== "local" && !/^(https?|file):\/\//.test(search)) {
         search = `${_source}:${search}`;
       }
 
-      const res = await node
-        .makeRequest<LavalinkResult>(`/loadtracks?identifier=${encodeURIComponent(search)}`)
-        .catch(err => reject(err));
+      const res = await node.makeRequest<LavalinkResult>(`/loadtracks?identifier=${encodeURIComponent(search)}`, r => {
+        if (node.options.requestTimeout) {
+          r.timeout(node.options.requestTimeout)
+        }
+      }).catch(err => reject(err));
 
       if (!res) {
         return reject(new Error("Query not found."));
@@ -390,12 +392,9 @@ export class Manager extends EventEmitter {
       const node = this.nodes.first();
       if (!node) throw new Error("No available nodes.");
 
-      const res = await node.makeRequest<TrackData[]>(`/decodetracks`, r => {
-        r.method = "POST";
-        r.body = JSON.stringify(tracks);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        r.headers!["Content-Type"] = "application/json";
-      })
+      const res = await node.makeRequest<TrackData[]>(`/decodetracks`, r => r
+        .method("POST")
+        .body(tracks, "json"))
         .catch(err => reject(err));
 
       if (!res) {
@@ -547,7 +546,7 @@ export interface ManagerOptions {
   send(id: string, payload: Payload): void;
 }
 
-export type SearchPlatform = "youtube" | "youtube music" | "soundcloud";
+export type SearchPlatform = "youtube" | "youtube music" | "soundcloud" | "local";
 
 export interface SearchQuery {
   /** The source to search from. */
