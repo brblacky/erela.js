@@ -3,8 +3,11 @@
   "version": "2.3.3",
   "description": "An easy-to-use Lavalink client for NodeJS.",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [  "dist" ],
+  "types": "typings/index.d.ts",
+  "files": [
+    "dist",
+    "typings"
+  ],
   "scripts": {
     "build": "tsc",
     "lint": "eslint --ext .ts ./src",
@@ -31,23 +34,21 @@
   "repository": "MenuDocs/erela.js",
   "bugs": "https://github.com/MenuDocs/erela.js",
   "devDependencies": {
-    "@types/node": "^16.6.1",
-    "@types/ws": "^7.4.7",
-    "@typescript-eslint/eslint-plugin": "^4.29.2",
-    "@typescript-eslint/parser": "^4.29.2",
+    "@types/node": "^14.6.0",
+    "@types/ws": "^6.0.4",
+    "@typescript-eslint/eslint-plugin": "^3.10.1",
+    "@typescript-eslint/parser": "^3.10.1",
     "dts-bundle": "^0.7.3",
     "eslint": "^7.7.0",
-    "typedoc": "^0.21.5",
+    "tslint": "^5.20.1",
+    "typedoc": "^0.19.2",
     "typedoc-plugin-no-inherit": "^1.2.0",
-    "typescript": "^4.3.5"
+    "typescript": "^3.9.7"
   },
   "dependencies": {
-    "@discordjs/collection": "^0.2.1",
-    "petitio": "^1.3.2",
-    "ws": "^8.1.0"
-  },
-  "engines": {
-    "node": ">=16.0.0"
+    "@discordjs/collection": "^0.1.6",
+    "petitio": "^1.1.0",
+    "ws": "^7.3.1"
   },
   "eslintConfig": {
     "root": true,
